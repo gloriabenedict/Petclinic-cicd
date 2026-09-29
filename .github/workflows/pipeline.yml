@@ -206,14 +206,22 @@ jobs:
           roleId: ${{ env.VAULT_ROLE_ID }}
           secretId: ${{ env.VAULT_SECRET_ID }}
           secrets: |
-            ${{ env.VAULT_JFROG_PATH }} password | JF_ACCESS_TOKEN
+            ${{ env.VAULT_JFROG_PATH }} username | JF_USER ;
+            ${{ env.VAULT_JFROG_PATH }} password | JF_PASSWORD
+
+      - name: Check Artifactory is reachable from the runner
+        run: |
+          echo "JF_URL is: ${{ env.JFROG_URL }}"
+          curl -i --max-time 20 "${{ env.JFROG_URL }}/artifactory/api/system/ping"
 
       - name: Setup JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4
         env:
           JF_URL: ${{ env.JFROG_URL }}
-          JF_ACCESS_TOKEN: ${{ env.JF_ACCESS_TOKEN }}
+          JF_USER: ${{ env.JF_USER }}
+          JF_PASSWORD: ${{ env.JF_PASSWORD }}
 
       - name: Upload JAR to Artifactory
         run: jf rt upload "target/*.jar" ${{ env.JFROG_REPO }}/
 
+ 
