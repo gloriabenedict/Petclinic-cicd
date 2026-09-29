@@ -200,7 +200,7 @@ jobs:
           name: app-jar
           path: target
  
-      - name: Authenticate to Vault and fetch JFrog credentials
+          - name: Authenticate to Vault and fetch JFrog credentials
         uses: hashicorp/vault-action@v3
         with:
           url: ${{ env.VAULT_ADDR }}
@@ -208,15 +208,15 @@ jobs:
           roleId: ${{ env.VAULT_ROLE_ID }}
           secretId: ${{ env.VAULT_SECRET_ID }}
           secrets: |
-            ${{ env.VAULT_JFROG_PATH }} username | JF_USER ;
-            ${{ env.VAULT_JFROG_PATH }} password | JF_PASSWORD
- 
+            ${{ env.VAULT_JFROG_PATH }} password | JF_ACCESS_TOKEN
+
       - name: Setup JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4
         env:
           JF_URL: ${{ env.JFROG_URL }}
-          JF_USER: ${{ env.JF_USER }}
-          JF_PASSWORD: ${{ env.JF_PASSWORD }}
+          JF_ACCESS_TOKEN: ${{ env.JF_ACCESS_TOKEN }}
  
       - name: Upload JAR to Artifactory
         run: jf rt upload "target/*.jar" ${{ env.JFROG_REPO }}/
+
+  
